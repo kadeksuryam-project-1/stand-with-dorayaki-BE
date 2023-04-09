@@ -1,0 +1,569 @@
+basePath: /api
+definitions:
+  schema.CreateDorayakiResponseDTO:
+    properties:
+      data:
+        $ref: '#/definitions/schema.Dorayaki'
+      success:
+        type: boolean
+    type: object
+  schema.CreateStoreResponseDTO:
+    properties:
+      data:
+        $ref: '#/definitions/schema.Store'
+      success:
+        type: boolean
+    type: object
+  schema.DeleteDorayakiResponseDTO:
+    properties:
+      success:
+        type: boolean
+    type: object
+  schema.DeleteStoreResponseDTO:
+    properties:
+      success:
+        type: boolean
+    type: object
+  schema.Dorayaki:
+    properties:
+      created_at:
+        type: string
+      description:
+        type: string
+      flavor:
+        type: string
+      id:
+        type: integer
+      image:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  schema.DorayakiStoreStock:
+    properties:
+      created_at:
+        type: string
+      dorayaki:
+        $ref: '#/definitions/schema.Dorayaki'
+      dorayaki_id:
+        type: integer
+      id:
+        type: integer
+      stock:
+        type: integer
+      store:
+        $ref: '#/definitions/schema.Store'
+      store_id:
+        type: integer
+      updated_at:
+        type: string
+    type: object
+  schema.Error:
+    properties:
+      message:
+        type: string
+      success:
+        type: boolean
+    type: object
+  schema.GetDorayakiResponseDTO:
+    properties:
+      data:
+        $ref: '#/definitions/schema.Dorayaki'
+      success:
+        type: boolean
+    type: object
+  schema.GetDorayakisResponseDTO:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/schema.Dorayaki'
+        type: array
+      success:
+        type: boolean
+    type: object
+  schema.GetStocksResponseDTO:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/schema.DorayakiStoreStock'
+        type: array
+      success:
+        type: boolean
+    type: object
+  schema.GetStoreResponseDTO:
+    properties:
+      data:
+        $ref: '#/definitions/schema.Store'
+      success:
+        type: boolean
+    type: object
+  schema.GetStoresResponseDTO:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/schema.Store'
+        type: array
+      success:
+        type: boolean
+    type: object
+  schema.StockRequestDTO:
+    properties:
+      stock:
+        minimum: 0
+        type: integer
+    type: object
+  schema.Store:
+    properties:
+      created_at:
+        type: string
+      district:
+        type: string
+      id:
+        type: integer
+      image:
+        type: string
+      name:
+        type: string
+      province:
+        type: string
+      street:
+        type: string
+      subdistrict:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  schema.UpdateDorayakiResponseDTO:
+    properties:
+      data:
+        $ref: '#/definitions/schema.Dorayaki'
+      success:
+        type: boolean
+    type: object
+  schema.UpdateStockResponseDTO:
+    properties:
+      data:
+        $ref: '#/definitions/schema.DorayakiStoreStock'
+      success:
+        type: boolean
+    type: object
+  schema.UpdateStoreResponseDTO:
+    properties:
+      data:
+        $ref: '#/definitions/schema.Store'
+      success:
+        type: boolean
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: kadeksuryam@gmail.com
+    name: Kadek Surya Mahardika
+  description: Stand with Dorayaki API Documentation
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  title: Stand with Dorayaki API
+  version: "2.0"
+paths:
+  /v1/dorayakis:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schema.GetDorayakisResponseDTO'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schema.Error'
+      summary: Get Dorayakis
+      tags:
+      - dorayakis
+    post:
+      consumes:
+      - multipart/form-data
+      parameters:
+      - description: flavor
+        in: formData
+        name: flavor
+        required: true
+        type: string
+      - description: description
+        in: formData
+        name: description
+        required: true
+        type: string
+      - description: image
+        in: formData
+        name: image
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schema.CreateDorayakiResponseDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schema.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schema.Error'
+      summary: Create Dorayaki
+      tags:
+      - dorayakis
+  /v1/dorayakis/{id}:
+    delete:
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schema.DeleteDorayakiResponseDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schema.Error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schema.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schema.Error'
+      summary: Delete Dorayaki
+      tags:
+      - dorayakis
+    get:
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schema.GetDorayakiResponseDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schema.Error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schema.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schema.Error'
+      summary: Get Dorayaki
+      tags:
+      - dorayakis
+    put:
+      consumes:
+      - multipart/form-data
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: flavor
+        in: formData
+        name: flavor
+        required: true
+        type: string
+      - description: description
+        in: formData
+        name: description
+        required: true
+        type: string
+      - description: image
+        in: formData
+        name: image
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schema.UpdateDorayakiResponseDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schema.Error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schema.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schema.Error'
+      summary: Update Dorayaki
+      tags:
+      - dorayakis
+  /v1/stocks:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schema.GetStocksResponseDTO'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schema.Error'
+      summary: Get stocks
+      tags:
+      - stocks
+    patch:
+      consumes:
+      - application/json
+      parameters:
+      - description: dorayaki_id
+        in: query
+        name: dorayaki_id
+        required: true
+        type: integer
+      - description: store_id
+        in: query
+        name: store_id
+        required: true
+        type: integer
+      - description: stock
+        in: body
+        name: stock
+        required: true
+        schema:
+          $ref: '#/definitions/schema.StockRequestDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schema.UpdateStockResponseDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schema.Error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schema.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schema.Error'
+      summary: Update Stock
+      tags:
+      - stocks
+  /v1/stores:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schema.GetStoresResponseDTO'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schema.Error'
+      summary: Get stores
+      tags:
+      - stores
+    post:
+      consumes:
+      - multipart/form-data
+      parameters:
+      - description: name
+        in: formData
+        name: name
+        required: true
+        type: string
+      - description: street
+        in: formData
+        name: street
+        required: true
+        type: string
+      - description: subdistrict
+        in: formData
+        name: subdistrict
+        required: true
+        type: string
+      - description: district
+        in: formData
+        name: district
+        required: true
+        type: string
+      - description: province
+        in: formData
+        name: province
+        required: true
+        type: string
+      - description: image
+        in: formData
+        name: image
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schema.CreateStoreResponseDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schema.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schema.Error'
+      summary: Create store
+      tags:
+      - stores
+  /v1/stores/{id}:
+    delete:
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schema.DeleteStoreResponseDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schema.Error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schema.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schema.Error'
+      summary: Delete store
+      tags:
+      - stores
+    get:
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schema.GetStoreResponseDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schema.Error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schema.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schema.Error'
+      summary: Get store
+      tags:
+      - stores
+    put:
+      consumes:
+      - multipart/form-data
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: name
+        in: formData
+        name: name
+        required: true
+        type: string
+      - description: street
+        in: formData
+        name: street
+        required: true
+        type: string
+      - description: subdistrict
+        in: formData
+        name: subdistrict
+        required: true
+        type: string
+      - description: district
+        in: formData
+        name: district
+        required: true
+        type: string
+      - description: province
+        in: formData
+        name: province
+        required: true
+        type: string
+      - description: image
+        in: formData
+        name: image
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schema.UpdateStoreResponseDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schema.Error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/schema.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/schema.Error'
+      summary: Update store
+      tags:
+      - stores
+swagger: "2.0"

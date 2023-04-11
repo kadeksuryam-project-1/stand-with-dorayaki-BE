@@ -7,35 +7,44 @@ import (
 )
 
 type IDorayakiStoreStockRepository interface {
-	GetAll() ([]schema.DorayakiStoreStock, error)
-	UpdateStock(stock, dorayakiID, storeID int) (schema.DorayakiStoreStock, error)
+	GetStocks(dorayakiID, storeID *int) ([]schema.DorayakiStoreStock, error)
+	UpdateStock(stock, stockID int) (schema.DorayakiStoreStock, error)
 }
 
 type dorayakiStoreStockRepository struct {
 	db *gorm.DB
 }
 
-func (r *dorayakiStoreStockRepository) GetAll() ([]schema.DorayakiStoreStock, error) {
+func (r *dorayakiStoreStockRepository) GetStocks(dorayakiID, storeID *int) ([]schema.DorayakiStoreStock, error) {
 	var dorayakiStoreStocks []schema.DorayakiStoreStock
+	query := r.db.Preload("Dorayaki").Preload("Store")
 
-	err := r.db.Preload("Dorayaki").Preload("Store").Find(&dorayakiStoreStocks).Error
+	if dorayakiID != nil {
+		query = query.Where("dorayaki_id = ?", *dorayakiID)
+	}
+
+	if storeID != nil {
+		query = query.Where("store_id = ?", *storeID)
+	}
+
+	err := query.Find(&dorayakiStoreStocks).Error
 
 	return dorayakiStoreStocks, err
 }
 
-func (r *dorayakiStoreStockRepository) UpdateStock(stock, dorayakiID, storeID int) (schema.DorayakiStoreStock, error) {
+func (r *dorayakiStoreStockRepository) UpdateStock(stock, stockID int) (schema.DorayakiStoreStock, error) {
 	tx := r.db.Begin()
 	var stockItem schema.DorayakiStoreStock
 	updateFields := map[string]interface{}{
 		"Stock": stock,
 	}
-	result := tx.Model(&schema.DorayakiStoreStock{}).Where("dorayaki_id = ? AND store_id = ?", dorayakiID, storeID).Updates(updateFields)
+	result := tx.Model(&schema.DorayakiStoreStock{}).Where("id = ?", stockID).Updates(updateFields)
 	if result.Error != nil {
 		tx.Rollback()
 		return stockItem, result.Error
 	}
 
-	if err := tx.Preload("Dorayaki").Preload("Store").Where("dorayaki_id = ? AND store_id = ?", dorayakiID, storeID).Find(&stockItem).Error; err != nil {
+	if err := tx.Preload("Dorayaki").Preload("Store").Where("id = ?", stockID).Find(&stockItem).Error; err != nil {
 		tx.Rollback()
 		return stockItem, err
 	}

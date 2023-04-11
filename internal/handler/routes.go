@@ -45,7 +45,7 @@ func RoutesInit(server *echo.Echo, db *gorm.DB) {
 
 	dorayakiStoreStocks := v1.Group("/stocks")
 	dorayakiStoreStocks.GET("", dorayakiStoreStockHandler.GetStocks)
-	dorayakiStoreStocks.PATCH("", dorayakiStoreStockHandler.UpdateStock)
+	dorayakiStoreStocks.PATCH("/:id", dorayakiStoreStockHandler.UpdateStock)
 }
 
 func HealthCheck(c echo.Context) error {

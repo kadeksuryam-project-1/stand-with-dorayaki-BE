@@ -6,8 +6,8 @@ import (
 )
 
 type IDorayakiStoreStockService interface {
-	GetStocks() ([]schema.DorayakiStoreStock, error)
-	UpdateStock(stock, dorayakiID, storeID int) (schema.DorayakiStoreStock, error)
+	GetStocks(dorayakiID, storeID *int) ([]schema.DorayakiStoreStock, error)
+	UpdateStock(stock, stockID int) (schema.DorayakiStoreStock, error)
 }
 
 type dorayakiStoreStockService struct {
@@ -20,14 +20,14 @@ func NewDorayakiStoreStockService(dorayakiStoreStockRepository repository.IDoray
 	}
 }
 
-func (s *dorayakiStoreStockService) GetStocks() ([]schema.DorayakiStoreStock, error) {
-	dorayakis, err := s.dorayakiStoreStockRepository.GetAll()
+func (s *dorayakiStoreStockService) GetStocks(dorayakiID, storeID *int) ([]schema.DorayakiStoreStock, error) {
+	dorayaki, err := s.dorayakiStoreStockRepository.GetStocks(dorayakiID, storeID)
 
-	return dorayakis, err
+	return dorayaki, err
 }
 
-func (s *dorayakiStoreStockService) UpdateStock(stock, dorayakiID, storeID int) (schema.DorayakiStoreStock, error) {
-	dorayaki, err := s.dorayakiStoreStockRepository.UpdateStock(stock, dorayakiID, storeID)
+func (s *dorayakiStoreStockService) UpdateStock(stock, stockID int) (schema.DorayakiStoreStock, error) {
+	dorayaki, err := s.dorayakiStoreStockRepository.UpdateStock(stock, stockID)
 
 	return dorayaki, err
 }

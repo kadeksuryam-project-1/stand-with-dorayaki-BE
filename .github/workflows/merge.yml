@@ -3,20 +3,20 @@ name: Tag-Build-Publish-Deploy
 on:
   push:
     branches:
-      - "master"
+      - "feature/CI-CD-2"
 
 jobs:
-  tag:
-    runs-on: ubuntu-latest
+  # tag:
+  #   runs-on: ubuntu-latest
 
-    if: github.event.pull_request.merged
+  #   if: github.event.pull_request.merged
     
-    steps:
-        uses: K-Phoen/semver-release-action@master
-        with:
-          release_branch: master
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #   steps:
+  #       uses: K-Phoen/semver-release-action@master
+  #       with:
+  #         release_branch: master
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   build-publish:
     needs: semver-tag
     runs-on: ubuntu-latest

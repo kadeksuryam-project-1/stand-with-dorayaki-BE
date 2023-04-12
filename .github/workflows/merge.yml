@@ -11,13 +11,23 @@ jobs:
 
     if: github.event.pull_request.merged
     
+    outputs:
+      tag: ${{ steps.semver.outputs.tag }}
+      
     steps:
       - name: Semver Tag
+        id: semver
         uses: K-Phoen/semver-release-action@master
         with:
           release_branch: master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Release ${{ steps.semver.outputs.tag }}
+          branch: master
+          
   build-publish:
     needs: tag
     runs-on: ubuntu-latest

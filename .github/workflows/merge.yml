@@ -1,9 +1,8 @@
 name: Tag-Build-Publish-Deploy
 
 on:
-  push:
-    branches:
-      - "master"
+  pull_request:
+    types: [closed]
 
 jobs:
   tag:

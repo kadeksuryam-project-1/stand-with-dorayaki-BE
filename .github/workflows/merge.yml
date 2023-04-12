@@ -31,5 +31,5 @@ jobs:
         with:
           context: .
           load: true
-          tags: kadeksuryam/stand-with-dorayaki-be:${{ github.ref_name }}
+          tags: kadeksuryam/stand-with-dorayaki-be:${{ needs.tag.outputs.tag }}
       

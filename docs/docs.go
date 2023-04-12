@@ -267,12 +267,32 @@ const docTemplate = `{
                 "tags": [
                     "stocks"
                 ],
-                "summary": "Get stocks",
+                "summary": "Get Stocks",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "dorayaki_id",
+                        "name": "dorayaki_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "store_id",
+                        "name": "store_id",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/schema.GetStocksResponseDTO"
+                            "$ref": "#/definitions/schema.UpdateStockResponseDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/schema.Error"
                         }
                     },
                     "500": {
@@ -282,7 +302,9 @@ const docTemplate = `{
                         }
                     }
                 }
-            },
+            }
+        },
+        "/v1/stocks/{id}": {
             "patch": {
                 "consumes": [
                     "application/json"
@@ -297,23 +319,34 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "dorayaki_id",
-                        "name": "dorayaki_id",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "op",
+                        "name": "op",
                         "in": "query",
                         "required": true
                     },
                     {
                         "type": "integer",
-                        "description": "store_id",
-                        "name": "store_id",
-                        "in": "query",
-                        "required": true
+                        "description": "tf_dest_id",
+                        "name": "tf_dest_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "tf_amount",
+                        "name": "tf_amount",
+                        "in": "query"
                     },
                     {
                         "description": "stock",
                         "name": "stock",
                         "in": "body",
-                        "required": true,
                         "schema": {
                             "$ref": "#/definitions/schema.StockRequestDTO"
                         }
@@ -753,20 +786,6 @@ const docTemplate = `{
                 }
             }
         },
-        "schema.GetStocksResponseDTO": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/schema.DorayakiStoreStock"
-                    }
-                },
-                "success": {
-                    "type": "boolean"
-                }
-            }
-        },
         "schema.GetStoreResponseDTO": {
             "type": "object",
             "properties": {
@@ -794,6 +813,9 @@ const docTemplate = `{
         },
         "schema.StockRequestDTO": {
             "type": "object",
+            "required": [
+                "stock"
+            ],
             "properties": {
                 "stock": {
                     "type": "integer",

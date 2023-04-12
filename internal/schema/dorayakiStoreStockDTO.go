@@ -1,7 +1,7 @@
 package schema
 
 type StockRequestDTO struct {
-	Stock int `json:"stock" validate:"gte=0"`
+	Stock int `json:"stock" validate:"required,gte=0"`
 }
 
 type GetStocksResponseDTO struct {

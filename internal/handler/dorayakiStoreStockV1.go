@@ -59,14 +59,6 @@ func (h *dorayakiStoreStockHandler) GetStocks(c echo.Context) error {
 		storeID = &id
 	}
 
-	stockDTO := new(schema.StockRequestDTO)
-	if err := c.Bind(stockDTO); err != nil {
-		return c.JSON(http.StatusBadRequest, schema.NewError(err.Error()))
-	}
-	if err := c.Validate(stockDTO); err != nil {
-		return c.JSON(http.StatusBadRequest, schema.NewError(err.Error()))
-	}
-
 	stocks, err := h.dorayakiStoreStockService.GetStocks(dorayakiID, storeID)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, schema.NewError(err.Error()))
@@ -85,7 +77,10 @@ func (h *dorayakiStoreStockHandler) GetStocks(c echo.Context) error {
 //		@Summary      Update Stock
 //		@Tags         stocks
 //	    @Param id path int true "id"
-//	    @Param stock body schema.StockRequestDTO true "stock"
+//	    @Param op query string true "op"
+//	    @Param tf_dest_id query int false "tf_dest_id"
+//		@Param tf_amount query int false "tf_amount"
+//	    @Param stock body schema.StockRequestDTO false "stock"
 //		@Accept       json
 //		@Produce      json
 //		@Success      200  {object} schema.UpdateStockResponseDTO
@@ -99,28 +94,62 @@ func (h *dorayakiStoreStockHandler) UpdateStock(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, schema.NewError(err.Error()))
 	}
 
-	stockDTO := new(schema.StockRequestDTO)
-	if err := c.Bind(stockDTO); err != nil {
-		return c.JSON(http.StatusBadRequest, schema.NewError(err.Error()))
-	}
-	if err := c.Validate(stockDTO); err != nil {
-		return c.JSON(http.StatusBadRequest, schema.NewError(err.Error()))
-	}
+	op := c.QueryParam("op")
 
-	stockItem, err := h.dorayakiStoreStockService.UpdateStock(stockDTO.Stock, id)
-	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return c.JSON(http.StatusNotFound, schema.NewError(err.Error()))
+	if op == "tf" {
+		destIdParam := c.QueryParam("tf_dest_id")
+
+		destId, err := strconv.Atoi(destIdParam)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, schema.NewError(err.Error()))
 		}
-		return c.JSON(http.StatusInternalServerError, schema.NewError(err.Error()))
+		if id == destId {
+			return c.JSON(http.StatusBadRequest, schema.NewError("destID must be different from srcID"))
+		}
+		amountParam := c.QueryParam("tf_amount")
+
+		amount, err := strconv.Atoi(amountParam)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, schema.NewError(err.Error()))
+		}
+
+		err = h.dorayakiStoreStockService.TransferStock(id, destId, amount)
+		if err != nil {
+			if errors.Is(err, gorm.ErrRecordNotFound) {
+				return c.JSON(http.StatusNotFound, schema.NewError(err.Error()))
+			}
+			return c.JSON(http.StatusInternalServerError, schema.NewError(err.Error()))
+		}
+
+		return c.JSON(http.StatusOK, schema.Response{
+			Success: true,
+		})
+	} else if op == "basic" {
+		stockDTO := new(schema.StockRequestDTO)
+		if err := c.Bind(stockDTO); err != nil {
+			return c.JSON(http.StatusBadRequest, schema.NewError(err.Error()))
+		}
+
+		if err := c.Validate(*stockDTO); err != nil {
+			return c.JSON(http.StatusBadRequest, schema.NewError(err.Error()))
+		}
+		stockItem, err := h.dorayakiStoreStockService.UpdateStock(stockDTO.Stock, id)
+		if err != nil {
+			if errors.Is(err, gorm.ErrRecordNotFound) {
+				return c.JSON(http.StatusNotFound, schema.NewError(err.Error()))
+			}
+			return c.JSON(http.StatusInternalServerError, schema.NewError(err.Error()))
+		}
+
+		return c.JSON(http.StatusOK, schema.UpdateStockResponseDTO{
+			Response: schema.Response{
+				Success: true,
+			},
+			Data: stockItem,
+		})
 	}
 
-	return c.JSON(http.StatusOK, schema.UpdateStockResponseDTO{
-		Response: schema.Response{
-			Success: true,
-		},
-		Data: stockItem,
-	})
+	return c.JSON(http.StatusNotFound, schema.NewError("Unrecognized operation"))
 }
 
 func (h *dorayakiStoreStockHandler) parseIDParam(c echo.Context) (int, error) {

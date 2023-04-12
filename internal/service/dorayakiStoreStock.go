@@ -8,6 +8,7 @@ import (
 type IDorayakiStoreStockService interface {
 	GetStocks(dorayakiID, storeID *int) ([]schema.DorayakiStoreStock, error)
 	UpdateStock(stock, stockID int) (schema.DorayakiStoreStock, error)
+	TransferStock(srcID, destID, amount int) error
 }
 
 type dorayakiStoreStockService struct {
@@ -30,4 +31,10 @@ func (s *dorayakiStoreStockService) UpdateStock(stock, stockID int) (schema.Dora
 	dorayaki, err := s.dorayakiStoreStockRepository.UpdateStock(stock, stockID)
 
 	return dorayaki, err
+}
+
+func (s *dorayakiStoreStockService) TransferStock(srcID, destID, amount int) error {
+	err := s.dorayakiStoreStockRepository.TransferStock(srcID, destID, amount)
+
+	return err
 }

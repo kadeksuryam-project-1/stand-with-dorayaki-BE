@@ -81,15 +81,6 @@ definitions:
       success:
         type: boolean
     type: object
-  schema.GetStocksResponseDTO:
-    properties:
-      data:
-        items:
-          $ref: '#/definitions/schema.DorayakiStoreStock'
-        type: array
-      success:
-        type: boolean
-    type: object
   schema.GetStoreResponseDTO:
     properties:
       data:
@@ -111,6 +102,8 @@ definitions:
       stock:
         minimum: 0
         type: integer
+    required:
+    - stock
     type: object
   schema.Store:
     properties:
@@ -324,38 +317,59 @@ paths:
       - dorayakis
   /v1/stocks:
     get:
+      parameters:
+      - description: dorayaki_id
+        in: query
+        name: dorayaki_id
+        type: integer
+      - description: store_id
+        in: query
+        name: store_id
+        type: integer
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/schema.GetStocksResponseDTO'
+            $ref: '#/definitions/schema.UpdateStockResponseDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/schema.Error'
         "500":
           description: Internal Server Error
           schema:
             $ref: '#/definitions/schema.Error'
-      summary: Get stocks
+      summary: Get Stocks
       tags:
       - stocks
+  /v1/stocks/{id}:
     patch:
       consumes:
       - application/json
       parameters:
-      - description: dorayaki_id
-        in: query
-        name: dorayaki_id
+      - description: id
+        in: path
+        name: id
         required: true
         type: integer
-      - description: store_id
+      - description: op
         in: query
-        name: store_id
+        name: op
         required: true
+        type: string
+      - description: tf_dest_id
+        in: query
+        name: tf_dest_id
+        type: integer
+      - description: tf_amount
+        in: query
+        name: tf_amount
         type: integer
       - description: stock
         in: body
         name: stock
-        required: true
         schema:
           $ref: '#/definitions/schema.StockRequestDTO'
       produces:

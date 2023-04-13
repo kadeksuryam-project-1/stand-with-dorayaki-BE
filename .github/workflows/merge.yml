@@ -3,8 +3,8 @@ name: Tag-Build-Publish-Deploy
 on:
   pull_request:
     types: [closed]
-    
-  
+  workflow_dispatch:
+      
 jobs:
   tag:
     runs-on: ubuntu-latest
@@ -47,4 +47,11 @@ jobs:
           context: .
           push: true
           tags: kadeksuryam/stand-with-dorayaki-be:${{ needs.tag.outputs.tag }}
-      
+      - name: Repository Dispatch
+        uses: peter-evans/repository-dispatch@v1
+        with:
+          token: ${{ secrets.PAT }}
+          repository: kadeksuryam-project-1/infrastructure
+          event-type: new-image
+          client-payload: '{"image": "kadeksuryam/stand-with-dorayaki-be:${{ needs.tag.outputs.tag }}"}'
+

@@ -48,24 +48,33 @@ func SeedStore(db *gorm.DB) {
 	rand.Seed(time.Now().UnixNano())
 	var seedStore []schema.Store
 
-	for i := 0; i < 9; i++ {
-		name := faker.New().Company().Name()
-		street := faker.New().Address().StreetName()
-		provinces, _ := fetchProvinces()
-		randProvince := provinces[rand.Intn(len(provinces))]
-		districts, _ := fetchDistrict(randProvince.ID)
-		randDistrict := districts[rand.Intn(len(districts))]
-		subdistricts, _ := fetchSubDistrict(randDistrict.ID)
-		randSubDistrict := subdistricts[rand.Intn(len(subdistricts))]
+	// Create a map to store unique company names
+	uniqueCompanyNames := make(map[string]bool)
 
-		seedStore = append(seedStore, schema.Store{
-			Name:        name,
-			Street:      street,
-			Province:    randProvince.Name,
-			District:    randDistrict.Name,
-			Subdistrict: randSubDistrict.Name,
-			Image:       bucketAddress + "assets/store/default.png",
-		})
+	for len(seedStore) < 9 {
+		name := faker.New().Company().Name()
+
+		// Check if the company name already exists in the map
+		if _, exists := uniqueCompanyNames[name]; !exists {
+			uniqueCompanyNames[name] = true
+
+			street := faker.New().Address().StreetName()
+			provinces, _ := fetchProvinces()
+			randProvince := provinces[rand.Intn(len(provinces))]
+			districts, _ := fetchDistrict(randProvince.ID)
+			randDistrict := districts[rand.Intn(len(districts))]
+			subdistricts, _ := fetchSubDistrict(randDistrict.ID)
+			randSubDistrict := subdistricts[rand.Intn(len(subdistricts))]
+
+			seedStore = append(seedStore, schema.Store{
+				Name:        name,
+				Street:      street,
+				Province:    randProvince.Name,
+				District:    randDistrict.Name,
+				Subdistrict: randSubDistrict.Name,
+				Image:       bucketAddress + "assets/store/default.png",
+			})
+		}
 	}
 
 	tx := db.Begin()

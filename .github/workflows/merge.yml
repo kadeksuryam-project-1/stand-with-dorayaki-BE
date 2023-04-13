@@ -54,3 +54,4 @@ jobs:
           repository: kadeksuryam-project-1/infrastructure
           event-type: new-image
           client-payload: '{"image": "kadeksuryam/stand-with-dorayaki-be:${{ needs.tag.outputs.tag }}"}'
+

@@ -15,6 +15,7 @@ func UnsetCookie(name string) *http.Cookie {
 	unsetCookie.Value = ""
 	unsetCookie.Path = "/"
 	unsetCookie.MaxAge = -1
+	unsetCookie.Domain = config.C.CookieDomain
 
 	return unsetCookie
 }

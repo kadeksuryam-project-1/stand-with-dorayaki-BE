@@ -7,12 +7,14 @@ import (
 
 	_ "backend/docs"
 
+	"backend/pkg/server"
+
 	"github.com/labstack/echo/v4"
 	echoSwagger "github.com/swaggo/echo-swagger"
 	"gorm.io/gorm"
 )
 
-func RoutesInit(server *echo.Echo, db *gorm.DB) {
+func RoutesInit(s *echo.Echo, db *gorm.DB) {
 	dorayakiRepository := repository.NewDorayakiRepository(db)
 	dorayakiService := service.NewDorayakiService(dorayakiRepository)
 	dorayakiHandler := NewDorayakiHandler(dorayakiService)
@@ -22,12 +24,18 @@ func RoutesInit(server *echo.Echo, db *gorm.DB) {
 	dorayakiStoreStockRepository := repository.NewDorayakiStoreStockRepository(db)
 	dorayakiStoreStockService := service.NewDorayakiStoreStockService(dorayakiStoreStockRepository)
 	dorayakiStoreStockHandler := NewDorayakiStoreStockHandler(dorayakiStoreStockService)
+	userRepository := repository.NewUserRepository(db)
+	authService := service.NewAuthService(userRepository)
+	authHandler := NewAuthHandler(authService)
 
-	api := server.Group("/api")
+	api := s.Group("/api")
 	api.GET("/healthz", HealthCheck)
 	api.GET("/swagger/*", echoSwagger.WrapHandler)
+	api.GET("/sessions/oauth/google", authHandler.GoogleOAuth)
 
 	v1 := api.Group("/v1")
+	v1.Use(server.CheckJWT)
+	v1.GET("/is-authenticated", AuthenticatedCheck)
 
 	dorayakis := v1.Group("/dorayakis")
 	dorayakis.POST("", dorayakiHandler.CreateDorayaki)
@@ -51,5 +59,11 @@ func RoutesInit(server *echo.Echo, db *gorm.DB) {
 func HealthCheck(c echo.Context) error {
 	return c.JSON(http.StatusOK, map[string]interface{}{
 		"message": "Server is up and running",
+	})
+}
+
+func AuthenticatedCheck(c echo.Context) error {
+	return c.JSON(http.StatusOK, map[string]interface{}{
+		"message": "Authenticated",
 	})
 }

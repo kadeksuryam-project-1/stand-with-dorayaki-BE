@@ -1,6 +1,7 @@
 package server
 
 import (
+	"backend/config"
 	"fmt"
 
 	"github.com/go-playground/validator/v10"
@@ -42,7 +43,11 @@ func NewServer() IServer {
 
 	app.Use(middleware.Logger())
 	app.Use(middleware.Recover())
-	app.Use(middleware.CORS())
+	app.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins:     config.C.AllowOrigins,
+		AllowCredentials: true,
+		AllowHeaders:     []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
+	}))
 
 	return &server{
 		app: app,

@@ -26,6 +26,7 @@ func migrate() *cobra.Command {
 				&schema.Dorayaki{},
 				&schema.Store{},
 				&schema.DorayakiStoreStock{},
+				&schema.User{},
 			)
 			seed.SeedDorayaki(lib.DB)
 			seed.SeedStore(lib.DB)

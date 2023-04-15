@@ -1,10 +1,15 @@
 package util
 
-import "strconv"
+import (
+	"strconv"
+	"strings"
+)
 
 type IVariable interface {
 	DefaultString(defaultValue string) string
 	DefaultBool(defaultValue bool) bool
+	DefaultInt(defaultValue int) int
+	DefaultStrings(defaultValue []string) []string
 }
 
 type variable struct {
@@ -29,6 +34,26 @@ func (v *variable) DefaultBool(defaultValue bool) bool {
 	}
 
 	return value
+}
+
+func (v *variable) DefaultInt(defaultValue int) int {
+	if len(v.Value) == 0 {
+		return defaultValue
+	}
+
+	value, err := strconv.Atoi(v.Value)
+	if err != nil {
+		return defaultValue
+	}
+
+	return value
+}
+
+func (v *variable) DefaultStrings(defaultValue []string) []string {
+	if len(v.Value) == 0 {
+		return []string{}
+	}
+	return strings.Split(v.Value, ",")
 }
 
 func NewVariable(value string) IVariable {

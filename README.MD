@@ -1,10 +1,14 @@
-# Backend API for Stand With Dorayaki App
+a# Backend API for Stand With Dorayaki App
 
 This repository contains the source code for the backend API of the Stand With Dorayaki App. The API is designed to manage and process data related to the Stand With Dorayaki application.
 
 ## API Documentation
 
 You can find the API documentation at `/api/swagger/index.html`. This documentation provides comprehensive information about the available endpoints, request and response formats.
+
+## ERD
+![image](https://user-images.githubusercontent.com/21070615/233018416-ac307c37-2548-45d4-80b5-930e4ff58b05.png)
+
 
 ## Tech Stack
 

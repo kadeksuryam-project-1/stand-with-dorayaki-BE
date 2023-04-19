@@ -1,4 +1,4 @@
-a# Backend API for Stand With Dorayaki App
+# Backend API for Stand With Dorayaki App
 
 This repository contains the source code for the backend API of the Stand With Dorayaki App. The API is designed to manage and process data related to the Stand With Dorayaki application.
 

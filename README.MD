@@ -6,6 +6,10 @@ This repository contains the source code for the backend API of the Stand With D
 
 You can find the API documentation at `/api/swagger/index.html`. This documentation provides comprehensive information about the available endpoints, request and response formats.
 
+## ERD
+![image](https://user-images.githubusercontent.com/21070615/233018416-ac307c37-2548-45d4-80b5-930e4ff58b05.png)
+
+
 ## Tech Stack
 
 The backend API is built using the following tech stack:

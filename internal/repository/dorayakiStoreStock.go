@@ -29,7 +29,7 @@ func (r *dorayakiStoreStockRepository) GetStocks(dorayakiID, storeID *int) ([]sc
 		query = query.Where("store_id = ?", *storeID)
 	}
 
-	err := query.Find(&dorayakiStoreStocks).Error
+	err := query.Order("id ASC").Find(&dorayakiStoreStocks).Error
 
 	return dorayakiStoreStocks, err
 }
@@ -46,7 +46,7 @@ func (r *dorayakiStoreStockRepository) UpdateStock(stock, stockID int) (schema.D
 		return stockItem, result.Error
 	}
 
-	if err := tx.Preload("Dorayaki").Preload("Store").Where("id = ?", stockID).Find(&stockItem).Error; err != nil {
+	if err := tx.Preload("Dorayaki").Preload("Store").Where("id = ?", stockID).Order("id ASC").Find(&stockItem).Error; err != nil {
 		tx.Rollback()
 		return stockItem, err
 	}
@@ -62,7 +62,7 @@ func (r *dorayakiStoreStockRepository) TransferStock(srcID, destID, amount int) 
 	tx := r.db.Begin()
 
 	var srcStock, destStock schema.DorayakiStoreStock
-	if err := tx.Preload("Dorayaki").Preload("Store").Where("id = ?", srcID).Find(&srcStock).Error; err != nil {
+	if err := tx.Preload("Dorayaki").Preload("Store").Where("id = ?", srcID).Order("id ASC").Find(&srcStock).Error; err != nil {
 		tx.Rollback()
 		return err
 	}
@@ -70,7 +70,7 @@ func (r *dorayakiStoreStockRepository) TransferStock(srcID, destID, amount int) 
 		tx.Rollback()
 		return errors.New("src stock cannot be less than transfer amount")
 	}
-	if err := tx.Preload("Dorayaki").Preload("Store").Where("id = ?", destID).Find(&destStock).Error; err != nil {
+	if err := tx.Preload("Dorayaki").Preload("Store").Where("id = ?", destID).Order("id ASC").Find(&destStock).Error; err != nil {
 		tx.Rollback()
 		return err
 	}

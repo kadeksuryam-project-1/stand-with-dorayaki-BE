@@ -66,7 +66,7 @@ func createDorayaki(tx *gorm.DB, dorayaki *schema.Dorayaki) error {
 
 func findAllStores(tx *gorm.DB) ([]schema.Store, error) {
 	var stores []schema.Store
-	if err := tx.Table("stores").Find(&stores).Error; err != nil {
+	if err := tx.Table("stores").Order("id ASC").Find(&stores).Error; err != nil {
 		return nil, err
 	}
 	return stores, nil
@@ -130,7 +130,7 @@ func (r *dorayakiRepository) UpdateOne(dorayaki schema.Dorayaki, id int) (schema
 func (r *dorayakiRepository) GetAll() ([]schema.Dorayaki, error) {
 	var dorayakis []schema.Dorayaki
 
-	err := r.db.Session(&gorm.Session{}).Find(&dorayakis).Error
+	err := r.db.Session(&gorm.Session{}).Order("id ASC").Find(&dorayakis).Error
 
 	return dorayakis, err
 }

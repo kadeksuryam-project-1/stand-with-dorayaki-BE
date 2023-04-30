@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"backend/config"
 	"backend/internal/repository"
 	"backend/internal/service"
 	"net/http"
@@ -77,6 +78,7 @@ func ClearAllCookies(c echo.Context) error {
 		cookie.Path = "/"
 		cookie.HttpOnly = true
 		cookie.MaxAge = -1
+		cookie.Domain = config.C.CookieDomain
 
 		c.SetCookie(cookie)
 	}

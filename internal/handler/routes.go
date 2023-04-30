@@ -32,6 +32,7 @@ func RoutesInit(s *echo.Echo, db *gorm.DB) {
 	api.GET("/healthz", HealthCheck)
 	api.GET("/swagger/*", echoSwagger.WrapHandler)
 	api.GET("/sessions/oauth/google", authHandler.GoogleOAuth)
+	api.GET("/clear-cookies", ClearAllCookies)
 
 	v1 := api.Group("/v1")
 	v1.Use(server.CheckJWT)
@@ -66,4 +67,19 @@ func AuthenticatedCheck(c echo.Context) error {
 	return c.JSON(http.StatusOK, map[string]interface{}{
 		"message": "Authenticated",
 	})
+}
+
+func ClearAllCookies(c echo.Context) error {
+	cookies := c.Cookies()
+
+	for _, cookie := range cookies {
+		cookie.Value = ""
+		cookie.Path = "/"
+		cookie.HttpOnly = true
+		cookie.MaxAge = -1
+
+		c.SetCookie(cookie)
+	}
+
+	return c.String(http.StatusOK, "All cookies cleared")
 }
